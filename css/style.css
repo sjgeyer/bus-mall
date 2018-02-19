@@ -1,0 +1,13 @@
+/* * {
+  border: 1px dashed red;
+} */
+
+img {
+  border: 3px solid black;
+}
+
+li {
+  list-style: none;
+  float: left;
+  margin: 5px;
+}
