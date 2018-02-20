@@ -2,9 +2,10 @@
   /* border: 1px dashed red; */
   font-family: sans-serif;
 }
+
 body {
   width: 960px;
-  margin: auto;
+  margin: 30px auto;
 }
 
 img {
