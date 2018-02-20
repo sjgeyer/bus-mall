@@ -9,8 +9,9 @@ var imageBox = document.getElementById('image-box');
 var images = [imageOne, imageTwo, imageThree];
 var picsLastSix = [];
 var allPicsUsed = [];
+var allProductViewTotal = [];
 
-var imageDescription = ['Rolling suitcase that looks like your favorite Star Wars Character', 'Banana slicer', 'iPad stand for your bathroom', 'Open-toed rainboots', 'All-in-one breakfast maker', 'Meatball flavored bubblegum', 'Inverted chair', 'Cthulhu action figure', 'Duck beak for your dog (various sizes)', 'Freshly slain canned dragon meat', 'Utensil heads that can attach to your pen', 'Sweepers to put on pet feet (various sizes)', 'Scissors to cut your perfect pizza slice', 'Shark attack sleeping bag', 'Onesie for babies that sweeps while the baby crawls', 'Tauntaun sleeping bag for kids', 'Canned unicorn meat', 'Wiggly tentacle thumb drive', 'Self-filling watering can', 'Anti-spill wine glass'];
+var imageDescription = ['Rolling suitcase that looks like your favorite Star Wars Character', 'Banana slicer', 'iPad stand for your bathroom', 'Open-toed rainboots', 'All-in-one breakfast maker', 'Meatball flavored bubblegum', 'Inverted chair', 'Cthulhu action figure', 'Duck beak for your dog (various sizes)', 'Freshly slain canned dragon meat', 'Utensil heads that can attach to your pen', 'Sweepers to put on pet feet (various sizes)', 'Scissors to cut your perfect pizza slice', 'Shark attack sleeping bag', 'Onesie for babies that sweeps while the baby crawls', 'Tauntaun sleeping bag for kids', 'Canned unicorn meat', 'Wiggly tentacle thumb drive', 'Self-filling watering can', 'Sure-to-spill wine glass'];
 
 function Product (name, filepath, descIndex) {
   this.name = name;
@@ -53,29 +54,42 @@ function randomProduct() {
   for(var i = 0; i < 3; i++) {
     //randomize index
     var productIndex = Math.floor(Math.random() * allProducts.length);
-    picsLastSix.push(productIndex);
-    allPicsUsed.push(productIndex);
+    console.log(productIndex + ': initial calculation');
     //check for repeats in current or last three, recalculate index if necessary
     for (var j = 0; j < picsLastSix.length; j++) {
-      if (productIndex === picsLastSix[j-1]) {
-        picsLastSix.pop();
-        allPicsUsed.pop();
+      if (productIndex === picsLastSix[j]) {
         productIndex = Math.floor(Math.random() * allProducts.length);
-        picsLastSix.push(productIndex);
-        allPicsUsed.push(productIndex);
+        console.log(productIndex + ': found duplicate, recalculated in if loop');
+        j=0;
       }
     }
+    picsLastSix.push(productIndex);
+    allPicsUsed.push(productIndex);
     //assign properties to images
     images[i].src = allProducts[productIndex].filepath;
     images[i].alt = allProducts[productIndex].name;
     images[i].title = allProducts[productIndex].description;
-    if (picsLastSix.length === 9) {
-      picsLastSix.splice(0, 3);
+    if (picsLastSix.length === 7) {
+      picsLastSix.shift();
     }
   }
   clicksLeft--;
   console.log(picsLastSix);
 }
 
+function countViews() {
+  for (var i = 0; i < allProducts.length; i++) {
+    var viewTotal = 0;
+    for (var j = 0; j < allPicsUsed.length; j++) {
+      if (i === allPicsUsed[j]) {
+        viewTotal++;
+      }
+    }
+    allProductViewTotal.push(viewTotal);
+  }
+}
+
 randomProduct();
+console.log(allPicsUsed);
+
 imageBox.addEventListener('click', randomProduct);
