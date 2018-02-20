@@ -1,13 +1,20 @@
-/* * {
-  border: 1px dashed red;
-} */
+* {
+  /* border: 1px dashed red; */
+  font-family: sans-serif;
+}
+body {
+  width: 960px;
+  margin: auto;
+}
 
 img {
   border: 3px solid black;
+  margin: auto;
 }
 
-li {
+#image-box li {
   list-style: none;
   float: left;
   margin: 5px;
+  text-align: center;
 }
