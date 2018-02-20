@@ -1,13 +1,16 @@
 'use strict';
 
 var allProducts = [];
-var clicksLeft = 26;
+var clicksLeft = 25;
 var imageBox = document.getElementById('image-box');
 var images = [document.getElementById('one'), document.getElementById('two'), document.getElementById('three')];
 var picsLastSix = ['', '', ''];
 var allSelections = [];
+var labelsArray = [];
+var clicksArray = [];
+var barColorArray = [];
 
-function Product (name, filepath) {
+function Product(name, filepath) {
   this.name = name;
   this.filepath = filepath;
   this.clicks = 0;
@@ -28,7 +31,7 @@ new Product('Freshly-slain canned dragon meat', 'img/dragon.jpg');
 new Product('Pen utensils', 'img/pen.jpg');
 new Product('Sweeper booties for pets', 'img/pet-sweep.jpg');
 new Product('Pizza-cutting scissors', 'img/scissors.jpg');
-new Product('Shark attack Sleeping Bag', 'img/shark.jpg');
+new Product('Shark attack sleeping bag', 'img/shark.jpg');
 new Product('Baby sweeper onesie', 'img/sweep.png');
 new Product('Tauntaun sleeping bag', 'img/tauntaun.jpg');
 new Product('Canned unicorn meat', 'img/unicorn.jpg');
@@ -37,12 +40,6 @@ new Product('Self-filling watering can', 'img/water-can.jpg');
 new Product('Sure-to-spill wine glass', 'img/wine-glass.jpg');
 
 function randomProduct() {
-  if(clicksLeft === 1) {
-    imageBox.removeEventListener('click', randomProduct);
-    imageBox.textContent = '';
-    render();
-    return;
-  }
   for(var i = 0; i < 3; i++) {
     var productIndex = Math.floor(Math.random() * allProducts.length);
     while (picsLastSix.includes(productIndex)) {
@@ -55,14 +52,25 @@ function randomProduct() {
     allProducts[productIndex].views++;
   }
   picsLastSix.splice(0,3);
+}
+
+function trackClicks(event) {
   clicksLeft--;
-}
-
-function trackClicks (event) {
   allSelections.push(event.target.alt);
+  if(clicksLeft === 0) {
+    imageBox.removeEventListener('click', trackClicks);
+    imageBox.textContent = '';
+    // render();
+    countClicks();
+    makeDataArrays();
+    makeBarColorArray();
+    renderChart();
+    return;
+  }
+  randomProduct();
 }
 
-function countClicks () {
+function countClicks() {
   for (var i = 0; i < allProducts.length; i++) {
     for (var j = 0; j < allSelections.length; j++) {
       if (allSelections[j] === allProducts[i].name) {
@@ -72,19 +80,83 @@ function countClicks () {
   }
 }
 
-function render () {
-  countClicks();
-  var h2El = document.getElementById('final');
-  h2El.textContent = 'Final Tally: ';
-  var listEl = document.getElementById('list');
-  for (var i = 0; i < allProducts.length; i++) {
-    var liEl = document.createElement('li');
-    liEl.textContent = allProducts[i].clicks + ' vote(s) for the ' + allProducts[i].name;
-    listEl.appendChild(liEl);
+//CHART STUFF ~~
+function makeDataArrays() {
+  for(var i = 0; i < allProducts.length; i++) {
+    labelsArray.push(allProducts[i].name);
+    clicksArray.push(allProducts[i].clicks);
   }
 }
 
-randomProduct();
+function makeBarColorArray() {
+  for (var j = 0; j < clicksArray.length; j++) {
+    if (clicksArray[j] > 5) {
+      barColorArray.push('#24D40C');
+    } else if(clicksArray[j] > 4) {
+      barColorArray.push('#1fbf43');
+    } else if(clicksArray[j] > 3) {
+      barColorArray.push('#1aaa7b');
+    } else if(clicksArray[j] > 2) {
+      barColorArray.push('#1595b2');
+    } else {
+      barColorArray.push('#1080ea');
+    }
+  }
+}
 
+var data = {
+  labels: labelsArray,
+  datasets: [{
+    label: 'Total Number of Votes',
+    data: clicksArray,
+    backgroundColor: barColorArray,
+    borderWidth: 1,
+  }]
+};
+
+function renderChart() {
+  var ctx = document.getElementById('chart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: data,
+    options: {
+      scaleShowValues: true,
+      responsive: false,
+      legend: {display: false},
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuart',
+      },
+      barValueSpacing: 0,
+      barDatasetSpacing: 0,
+      scales: {
+        yAxes: [{
+          ticks: {
+            stepSize: 1,
+          },
+          scaleLabel: {
+            display: true,
+            labelString: 'Total # of Votes',
+          }
+        }],
+        xAxes: [{
+          gridLines: {
+            display: false,
+          },
+          ticks: {
+            autoSkip: false,
+          }
+        }]
+      },
+      title: {
+        display: true,
+        text: 'Total Number of Votes by Product',
+        fontSize: 20,
+      }
+    },
+  });
+}
+
+//CALL
+randomProduct();
 imageBox.addEventListener('click', trackClicks);
-imageBox.addEventListener('click', randomProduct);

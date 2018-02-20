@@ -19,3 +19,7 @@ img {
   margin: 5px;
   text-align: center;
 }
+
+canvas {
+  margin: 1px;
+}
