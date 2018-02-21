@@ -8,7 +8,9 @@ var picsLastSix = ['', '', ''];
 var allSelections = [];
 var labelsArray = [];
 var clicksArray = [];
-var barColorArray = [];
+var clicksBarColorArray = [];
+var pctBarColorArray = [];
+var percentClickedArray = [];
 
 function Product(name, filepath) {
   this.name = name;
@@ -40,6 +42,8 @@ new Product('Self-filling watering can', 'img/water-can.jpg');
 new Product('Sure-to-spill wine glass', 'img/wine-glass.jpg');
 
 function randomProduct() {
+  document.getElementById('chart').hidden = true;
+  document.getElementById('pct-chart').hidden = true;
   for(var i = 0; i < 3; i++) {
     var productIndex = Math.floor(Math.random() * allProducts.length);
     while (picsLastSix.includes(productIndex)) {
@@ -60,10 +64,8 @@ function trackClicks(event) {
   if(clicksLeft === 0) {
     imageBox.removeEventListener('click', trackClicks);
     imageBox.textContent = '';
-    // render();
     countClicks();
     makeDataArrays();
-    makeBarColorArray();
     renderChart();
     return;
   }
@@ -86,39 +88,46 @@ function makeDataArrays() {
     labelsArray.push(allProducts[i].name);
     clicksArray.push(allProducts[i].clicks);
   }
+  calcPercentClicked();
+  clicksBarColorArray.length = 20;
+  clicksBarColorArray.fill('#63a1fd');
+  pctBarColorArray.length = 20;
+  pctBarColorArray.fill('#a57cfd');
 }
 
-function makeBarColorArray() {
-  for (var j = 0; j < clicksArray.length; j++) {
-    if (clicksArray[j] > 5) {
-      barColorArray.push('#24D40C');
-    } else if(clicksArray[j] > 4) {
-      barColorArray.push('#1fbf43');
-    } else if(clicksArray[j] > 3) {
-      barColorArray.push('#1aaa7b');
-    } else if(clicksArray[j] > 2) {
-      barColorArray.push('#1595b2');
-    } else {
-      barColorArray.push('#1080ea');
-    }
+function calcPercentClicked() {
+  for(var i = 0; i < clicksArray.length; i++) {
+    var percentClicked = Math.floor((clicksArray[i] / allProducts[i].views) * 100);
+    percentClickedArray.push(percentClicked);
   }
 }
 
-var data = {
+var clicksData = {
   labels: labelsArray,
   datasets: [{
     label: 'Total Number of Votes',
     data: clicksArray,
-    backgroundColor: barColorArray,
+    backgroundColor: clicksBarColorArray,
+    borderWidth: 1,
+  }]
+};
+
+var pctData = {
+  labels: labelsArray,
+  datasets: [{
+    label: 'Percentage Clicked',
+    data: percentClickedArray,
+    backgroundColor: pctBarColorArray,
     borderWidth: 1,
   }]
 };
 
 function renderChart() {
-  var ctx = document.getElementById('chart').getContext('2d');
-  new Chart(ctx, {
+  var ctxClicks = document.getElementById('chart').getContext('2d');
+  var ctxPct = document.getElementById('pct-chart').getContext('2d');
+  new Chart(ctxClicks, {
     type: 'bar',
-    data: data,
+    data: clicksData,
     options: {
       scaleShowValues: true,
       responsive: false,
@@ -151,6 +160,47 @@ function renderChart() {
       title: {
         display: true,
         text: 'Total Number of Votes by Product',
+        fontSize: 20,
+      }
+    },
+  });
+  new Chart (ctxPct, {
+    type: 'bar',
+    data: pctData,
+    options: {
+      scaleShowValues: true,
+      responsive: false,
+      legend: {display: false},
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuart',
+      },
+      barValueSpacing: 0,
+      barDatasetSpacing: 0,
+      scales: {
+        yAxes: [{
+          ticks: {
+            min: 0,
+            max: 100,
+            stepSize: 10,
+          },
+          scaleLabel: {
+            display: true,
+            labelString: 'Percentage Clicked',
+          }
+        }],
+        xAxes: [{
+          gridLines: {
+            display: false,
+          },
+          ticks: {
+            autoSkip: false,
+          }
+        }]
+      },
+      title: {
+        display: true,
+        text: 'Click-through Percentage By Product',
         fontSize: 20,
       }
     },

@@ -11,6 +11,7 @@ Focus group participants:
 1. As a focus group participant, I want a simple interface with clear instructions about what my task is.
 2. As a focus group participant, I want to be able to select from 3 different items and not see the same items pop up all the time.
 3. As a focus group participant, I want to know how my preferences stack up against other user's preferences.
+4. As a focus group participant, I want to see the percentage of times I clicked on an item based on how often that product showed.
 
 Developers:
 1. As a developer, I want to use a constructor function to hold all the images and their properties.

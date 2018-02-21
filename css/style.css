@@ -1,25 +1,49 @@
-* {
-  /* border: 1px dashed red; */
-  font-family: sans-serif;
-}
+/* * {
+  border: 1px dashed red;
+} */
 
 body {
   width: 960px;
   margin: 30px auto;
+  text-align: center;
+  font-family: sans-serif;
+}
+
+header, footer {
+  background-color: #aaa;
+  height: 30px;
 }
 
 img {
-  border: 3px solid black;
+  border: 10px solid #63a1fd;
+  border-radius: 20px;
   margin: auto;
 }
 
-#image-box li {
+h1 {
+  font-weight: bold;
+  font-size: 50px;
+  margin: 30px;
+  font-family: 'Sigmar One', cursive;
+}
+
+h2 {
+  font-weight: bold;
+  font-size: 20px;
+  margin: 20px;
+}
+
+ul {
+  margin: 30px auto;
+}
+
+li {
   list-style: none;
-  float: left;
-  margin: 5px;
+  display: inline-block;
+  margin: 3px;
   text-align: center;
 }
 
 canvas {
-  margin: 1px;
+  margin: 10px;
 }
