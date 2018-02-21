@@ -92,7 +92,7 @@ function makeDataArrays() {
   clicksBarColorArray.length = 20;
   clicksBarColorArray.fill('#63a1fd');
   pctBarColorArray.length = 20;
-  pctBarColorArray.fill('#a57cfd');
+  pctBarColorArray.fill('#01D05F');
 }
 
 function calcPercentClicked() {
