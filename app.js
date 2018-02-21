@@ -1,8 +1,11 @@
 'use strict';
 
-var clicksLeft = 25;
+var clicksLeft = 2;
 var imageBox = document.getElementById('image-box');
 var images = [document.getElementById('one'), document.getElementById('two'), document.getElementById('three')];
+var tableEl = document.getElementById('results');
+var trEl = document.createElement('tr');
+var button = document.getElementById('button');
 var allProducts = [];
 var picsLastSix = ['', '', ''];
 var allSelections = [];
@@ -11,7 +14,7 @@ var clicksArray = [];
 var clicksBarColorArray = [];
 var pctBarColorArray = [];
 var percentClickedArray = [];
-// var productsStringified = JSON.stringify(allProducts);
+var recommended = [];
 
 function Product(name, filepath) {
   this.name = name;
@@ -48,6 +51,7 @@ function makeAllProducts() {
 function randomProduct() {
   document.getElementById('chart').hidden = true;
   document.getElementById('pct-chart').hidden = true;
+  button.hidden = true;
   for(var i = 0; i < 3; i++) {
     var productIndex = Math.floor(Math.random() * allProducts.length);
     while (picsLastSix.includes(productIndex)) {
@@ -71,7 +75,7 @@ function trackClicks(event) {
     countClicks();
     makeDataArrays();
     renderChart();
-    console.log(allProducts);
+    button.hidden = false;
     localStorage.setItem('productsToLS', JSON.stringify(allProducts));
     return;
   }
@@ -99,6 +103,13 @@ function makeDataArrays() {
   clicksBarColorArray.fill('#63a1fd');
   pctBarColorArray.length = 20;
   pctBarColorArray.fill('#01D05F');
+  for(var j = 0; j < percentClickedArray.length; j++) {
+    if (percentClickedArray[j] > 40) {
+      recommended.push('YES');
+    } else {
+      recommended.push('NO');
+    }
+  }
 }
 
 function calcPercentClicked() {
@@ -147,6 +158,7 @@ function renderChart() {
       scales: {
         yAxes: [{
           ticks: {
+            min: 0,
             stepSize: 1,
           },
           scaleLabel: {
@@ -213,8 +225,41 @@ function renderChart() {
   });
 }
 
-//CALL
+function makeCell(content) {
+  var tdEl = document.createElement('td');
+  tdEl.textContent = content;
+  trEl.appendChild(tdEl);
+  if(content === 'YES') {
+    tdEl.className='yes';
+  }
+  if(content === 'NO') {
+    tdEl.className='no';
+  }
+}
 
+function renderTable() {
+  button.hidden = true;
+  var tableHeaders = ['Item', 'Views', 'Clicks', '% of Clicks When Viewed', 'Recommended?'];
+  //HEADER ROW
+  for (var i = 0; i < tableHeaders.length; i++) {
+    var thEl = document.createElement('th');
+    thEl.textContent = tableHeaders[i];
+    trEl.appendChild(thEl);
+  }
+  tableEl.appendChild(trEl);
+  //DATA ROWS
+  for (var j = 0; j < allProducts.length; j++) {
+    trEl = document.createElement('tr');
+    makeCell(allProducts[j].name);
+    makeCell(allProducts[j].views);
+    makeCell(allProducts[j].clicks);
+    makeCell(percentClickedArray[j] + '%');
+    makeCell(recommended[j]);
+    tableEl.appendChild(trEl);
+  }
+}
+
+//CALL
 if (localStorage.getItem('productsToLS', JSON.stringify(allProducts)) === null) {
   makeAllProducts();
 } else {
@@ -222,5 +267,5 @@ if (localStorage.getItem('productsToLS', JSON.stringify(allProducts)) === null) 
   allProducts = JSON.parse(productsRetrieved);
 }
 randomProduct();
-
 imageBox.addEventListener('click', trackClicks);
+button.addEventListener('click', renderTable);
