@@ -1,6 +1,6 @@
 'use strict';
 
-var clicksLeft = 2;
+var clicksLeft = 25;
 var imageBox = document.getElementById('image-box');
 var images = [document.getElementById('one'), document.getElementById('two'), document.getElementById('three')];
 var tableEl = document.getElementById('results');
